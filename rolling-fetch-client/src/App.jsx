@@ -1,26 +1,19 @@
-import { useState } from "react";
-import { fetchFundsWithRollingWindow } from "./utils/fetchFundsWithRollingWindow";
+import { useFundsWorker } from "./hooks/useFundsWorker";
 
 function App() {
-  const [funds, setFunds] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { funds, loading, loadFunds } = useFundsWorker();
 
-  const loadFunds = async () => {
-    setLoading(true);
-    // Simulate fetching 100 fund IDs
+  const handleLoadFunds = () => {
     const mockFundIds = Array.from({ length: 100 }, (_, i) =>
       (i + 1).toString()
     );
-
-    // Simulate fetching funds with rolling window
-    await fetchFundsWithRollingWindow(mockFundIds, 4, 5, setFunds);
-    setLoading(false);
+    loadFunds(mockFundIds);
   };
 
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Fund Data Simulator</h1>
-      <button onClick={loadFunds} disabled={loading}>
+      <button onClick={handleLoadFunds} disabled={loading}>
         {loading ? "Loading..." : "Fetch 100 Funds"}
       </button>
 
