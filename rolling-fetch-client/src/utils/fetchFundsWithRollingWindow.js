@@ -5,13 +5,12 @@ import { fetchFundsData } from "./fetchFundsData";
 export const fetchFundsWithRollingWindow = async (
   fundIds,
   chunkSize = 4,
-  concurrencyLimit = 5
+  concurrencyLimit = 5,
+  updateFunds
 ) => {
   console.error("Using rolling window approach");
   // Split the fund IDs into chunks of size `chunkSize`
   const chunks = chunkArray(fundIds, chunkSize);
-  const results = [];
-
   let currentIndex = 0;
 
   // Function to run the next chunk in the queue
@@ -23,8 +22,10 @@ export const fetchFundsWithRollingWindow = async (
 
     const chunk = chunks[currentIndex++];
     try {
+      // Fetch data for the current chunk
       const data = await fetchFundsData(chunk);
-      results.push(...data);
+      // Update the funds with the fetched data
+      updateFunds((prevFunds) => [...prevFunds, ...data]);
     } catch (err) {
       console.error("Error fetching chunk", chunk, err);
     }
@@ -38,5 +39,4 @@ export const fetchFundsWithRollingWindow = async (
 
   // Wait until all workers finish
   await Promise.all(workers);
-  return results;
 };

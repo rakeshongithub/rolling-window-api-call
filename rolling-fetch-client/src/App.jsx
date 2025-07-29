@@ -13,8 +13,7 @@ function App() {
     );
 
     // Simulate fetching funds with rolling window
-    const result = await fetchFundsWithRollingWindow(mockFundIds);
-    setFunds(result);
+    await fetchFundsWithRollingWindow(mockFundIds, 4, 5, setFunds);
     setLoading(false);
   };
 
